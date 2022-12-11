@@ -13,23 +13,26 @@ client = gspread.authorize(creds)
 
 # シートを取得
 sheets = client.open("Legislators")
-# 必要な情報を取得
+# 必要な情報を取得・定義
 index = 1
-# sheet.insert_row(row, index)
 args = sys.argv[1]
-initialPosition = 2
+initialPosition = 3
 data_fmt = cellFormat(
     backgroundColor=color(1, 0.9, 0.7)
 )
+data_fmt_white = cellFormat(
+    backgroundColor=color(1, 1, 1)
+)
 
 
-def main(sheet):
+def create_template(sheet):
     for i in range(int(args)):
         sheet.insert_row([""], initialPosition + i)
-
+        if i != 0:
+            format_cell_range(sheet, '{0}:{0}'.format(initialPosition + i), data_fmt_white)
     sheet.update_cell(initialPosition, 2, '{0:%Y/%m/%d}'.format(date.today()))
-    format_cell_range(sheet, f'2:2', data_fmt)
+    format_cell_range(sheet, '3:3', data_fmt)
 
 
-main(sheets.get_worksheet(0))
-main(sheets.get_worksheet(1))
+create_template(sheets.get_worksheet(0))
+create_template(sheets.get_worksheet(1))
